@@ -5,8 +5,10 @@ import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import TextInput from "./TextInput";
 import CustomButton from "./CustomButton";
+import { apiRequest } from "../utils";
+import { Login } from "../redux/userSlice"; 
 
-const SignUp = ({ open, setOpen }) => { 
+const SignUp = ({ open, setOpen }) => {
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -27,7 +29,38 @@ const SignUp = ({ open, setOpen }) => {
 
   const closeModal = () => setOpen(false);
 
-  const onSubmit = () => {};
+  const onSubmit = async (data) => {
+    let URL = null;
+
+    if (isRegister) {
+     accountType==='seeker'? URL = "auth/register" : URL = "companies/register";
+    } else {
+      accountType==='seeker'? URL = "auth/login" : URL = "companies/login";
+    }
+
+    try {
+      const res = await apiRequest({
+        method: "POST",
+        url: URL,
+        data: data,
+      });
+
+      console.log(res)
+
+      if(res?.status === 'failed'){
+        setErrMsg(res?.message);
+      } else {
+        setErrMsg("");
+        const data = {token: res?.token, ...res?.user};
+        dispatch(Login(data));
+        localStorage.setItem("userInfo", JSON.stringify(data));
+        window.location.replace(from);
+      }
+    } catch (error) {
+      console.log(error)
+      
+    }
+  };
 
   return (
     <>

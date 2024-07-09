@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Listbox, Transition, ListboxOption, ListboxOptions, ListboxButton} from "@headlessui/react";
+import { Listbox, Transition } from "@headlessui/react";
 import { BsCheck2, BsChevronExpand } from "react-icons/bs";
 
 const options = ["Newest", "Oldest", "A-Z", "Z-A"];
@@ -9,7 +9,7 @@ const ListBox = ({ sort, setSort }) => {
     <div className='w-[8rem] md:w-[10rem]'>
       <Listbox value={sort} onChange={setSort}>
         <div className='relative mt-1'>
-          <ListboxButton
+          <Listbox.Button
             className={
               "relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
             }
@@ -22,7 +22,7 @@ const ListBox = ({ sort, setSort }) => {
                 aria-hidden='true'
               />
             </span>
-          </ListboxButton>
+          </Listbox.Button>
 
           <Transition
             as={Fragment}
@@ -30,9 +30,9 @@ const ListBox = ({ sort, setSort }) => {
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <ListboxOptions className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+            <Listbox.Options className='absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
               {options.map((op, index) => (
-                <ListboxOption
+                <Listbox.Option
                   key={index}
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
@@ -57,9 +57,9 @@ const ListBox = ({ sort, setSort }) => {
                       ) : null}
                     </>
                   )}
-                </ListboxOption>
+                </Listbox.Option>
               ))}
-            </ListboxOptions>
+            </Listbox.Options>
           </Transition>
         </div>
       </Listbox>

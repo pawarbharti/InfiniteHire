@@ -6,7 +6,7 @@ import {
   AuthPage,
   Companies,
   CompanyProfile,
-  FindJob,
+  FindJobs,
   JobDetail,
   UploadJob,
   UserProfile,
@@ -36,11 +36,11 @@ function App() {
             path='/'
             element={<Navigate to='/find-jobs' replace={true} />}
           />
-          <Route path='/find-jobs' element={<FindJob />} />
+          <Route path='/find-jobs' element={<FindJobs />} />
           <Route path='/companies' element={<Companies />} />
           <Route
             path={
-              user?.user?.accountType === "seeker"
+              user?.accountType === "seeker"
                 ? "/user-profile"
                 : "/user-profile/:id"
             }
