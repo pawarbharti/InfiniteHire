@@ -12,7 +12,7 @@ const About = () => {
             http://www.microsoft.com and at http://www.microsoft.com for more
             information about the contributors and contributors to the Microsoft
             Corporation and its contributors to the Microsoft Corporation and
-            its contributors to the Microsoft Corporation
+            its contributors to the Microsoft & Corporation
           </p>
         </div>
         <img src={JobImg} alt='About' className='w-auto h-[300px]' />
