@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Menu, Transition, MenuItem, MenuButton, MenuItems } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import { BiChevronDown } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { HiMenuAlt3 } from "react-icons/hi";
@@ -7,39 +7,45 @@ import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import CustomButton from "./CustomButton";
 import { users } from "../utils/data";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Logout } from "../redux/userSlice";
+import { NoProfile } from "../assets";
 
-function MenuList({user, onClick}) {
-  const handleLogout = () => {}
+function MenuList({ user, onClick }) {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(Logout());
+    window.location.replace('/');
+
+  };
 
   return (
     <div>
-      <Menu as = 'div' className='inline-block text-left'>
-      <div className="flex">
-        <MenuButton className='inline-flex gap-2 w-full rounded-md bg-white md:px-4 py-2 text-sm font-medium text-slate-700 hover:bg-opacity-20 '>
-        <div className='leading[80px] flex flex-col items-start'>
-        <p className='text-sm font-semibold '>
-         {user?.firstName ?? user?.name}
-        </p>
-        <span className='text-sm text-blue-600 '>
+      <Menu as='div' className='inline-block text-left'>
+        <div className='flex'>
+          <Menu.Button className='inline-flex gap-2 w-full rounded-md bg-white md:px-4 py-2 text-sm font-medium text-slate-700 hover:bg-opacity-20 '>
+            <div className='leading[80px] flex flex-col items-start'>
+              <p className='text-sm font-semibold '>
+                {user?.firstName ?? user?.name}
+              </p>
+              <span className='text-sm text-blue-600 '>
                 {user?.jobTitle ?? user?.email}
-        </span>
+              </span>
+            </div>
 
-        </div>
-        
-        <img
-              src={user?.profileUrl}
+            <img
+              src={user?.profileUrl || NoProfile}
               alt='user profile'
               className='w-10 h-10 rounded-full object-cover '
-         />
-                     <BiChevronDown
+            />
+            <BiChevronDown
               className='h-8 w-8 text-slate-600'
               aria-hidden='true'
             />
+          </Menu.Button>
+        </div>
 
-        </MenuButton>
-      </div>
-      <Transition
+        <Transition
           as={Fragment}
           enter='transition ease-out duration-100'
           enterFrom='transform opacity-0 scale-95'
@@ -48,11 +54,10 @@ function MenuList({user, onClick}) {
           leaveFrom='transform opacity-100 scale-100'
           leaveTo='transform opacity-0 scale-95'
         >
-        <MenuItems className='absolute z-50 right-2 mt-2 w-56 origin-top-right divide-y dividfe-gray-100 rounded-md bg-white shadow-lg focus:outline-none '>
-
-        <div className='p-1 '>
-        <MenuItem>
-        {({ active }) => (
+          <Menu.Items className='absolute z-50 right-2 mt-2 w-56 origin-top-right divide-y dividfe-gray-100 rounded-md bg-white shadow-lg focus:outline-none '>
+            <div className='p-1 '>
+              <Menu.Item>
+                {({ active }) => (
                   <Link
                     to={`${
                       user?.accountType ? "user-profile" : "company-profile"
@@ -71,10 +76,9 @@ function MenuList({user, onClick}) {
                     {user?.accountType ? "User Profile" : "Company Profile"}
                   </Link>
                 )}
+              </Menu.Item>
 
-        </MenuItem>
-
-        <MenuItem>
+              <Menu.Item>
                 {({ active }) => (
                   <button
                     onClick={() => handleLogout()}
@@ -91,62 +95,50 @@ function MenuList({user, onClick}) {
                     Log Out
                   </button>
                 )}
-          </MenuItem>
-
-        </div>
-
-        </MenuItems>
-
-
-
-
-
-
+              </Menu.Item>
+            </div>
+          </Menu.Items>
         </Transition>
-         
       </Menu>
     </div>
-
-    
   );
-
 }
-
 const Navbar = () => {
-    const user = users[1]
-    const [isOpen, setIsOpen] = useState(false);
-   
-    const handleCloseNavbar = () => {
-        setIsOpen((prev) => !prev);
+  const { user } = useSelector((state) => state.user);
+  const [isOpen, setIsOpen] = useState(false);
 
-    };
+  const handleCloseNavbar = () => {
+    setIsOpen((prev) => !prev);
+  };
 
-  return ( 
-  <>
-  <div className="relative bg-[#f7fdfd] z-50">
-  <nav className="container mx-auto flex items-center justify-between p-5">
-  <div>
-    <Link to='/' className="text-blue-600 font-bold text-xl">
-    Infinite<span className="text-[#1677cccb]">Hire</span>
+  return (
+    <>
+      <div className='relative bg-[#f7fdfd] z-50'>
+        <nav className='container mx-auto flex items-center justify-between p-5'>
+          <div>
+            <Link to='/' className='text-blue-600 font-bold text-xl'>
+              Job<span className='text-[#1677cccb]'>Finder</span>
+            </Link>
+          </div>
 
-    </Link>
-  </div>
-  <ul className="hidden lg:flex gap-10 text-base">
-    <li>
-        <Link to='/'>Find Job</Link>
-    </li>
-    <li>
-        <Link to='/companies'>Companies</Link>
-    </li>
-    <li>
-        <Link to='/upload-job'>Upload Job</Link>
-    </li>
-    <li>
-        <Link to='/about-us'>About</Link> 
-    </li>
-  </ul>
-  
-  <div className='hidden lg:block'>
+          <ul className='hidden lg:flex gap-10 text-base'>
+            <li>
+              <Link to='/'>Find Job</Link>
+            </li>
+            <li>
+              <Link to='/companies'>Companies</Link>
+            </li>
+            <li>
+              <Link  to={
+              user?.accountType === "seeker" ? "/applications" : "/upload-job"
+            }>{user?.accountType === "seeker" ? "Applications" : "Upload Job"}</Link>
+            </li>
+            <li>
+              <Link to='/about-us'>About</Link>
+            </li>
+          </ul>
+
+          <div className='hidden lg:block'>
             {!user?.token ? (
               <Link to='/user-auth'>
                 <CustomButton
@@ -155,11 +147,10 @@ const Navbar = () => {
                 />
               </Link>
             ) : (
-                <div>
+              <div>
                 <MenuList user={user} />
               </div>
-            )
-            }
+            )}
           </div>
 
           <button
@@ -168,13 +159,9 @@ const Navbar = () => {
           >
             {isOpen ? <AiOutlineClose size={26} /> : <HiMenuAlt3 size={26} />}
           </button>
-           
+        </nav>
 
-
-
-</nav>
-
-{/* MOBILE MENU */}
+        {/* MOBILE MENU */}
         <div
           className={`${
             isOpen ? "absolute flex bg-[#f7fdfd] " : "hidden"
@@ -189,7 +176,7 @@ const Navbar = () => {
           <Link
             onClick={handleCloseNavbar}
             to={
-              user?.accountType === "seeker" ? "applly-gistory" : "upload-job"
+              user?.accountType === "seeker" ? "/applications" : "/upload-job"
             }
           >
             {user?.accountType === "seeker" ? "Applications" : "Upload Job"}
@@ -212,16 +199,9 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
-
-
         </div>
-
-
-
-  </div>
-
-  </>
+      </div>
+    </>
   );
 };
 

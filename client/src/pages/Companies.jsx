@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CompanyCard, CustomButton, Header, ListBox } from "../components";
+import { CompanyCard, CustomButton, Header, ListBox, Loading } from "../components";
 import { companies } from "../utils/data";
+import { apiRequest, updateURL } from "../utils";
 
 const Companies = () => {
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
   const [recordsCount, setRecordsCount] = useState(0);
-  const [data, setData] = useState(companies ?? []);
+  const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [cmpLocation, setCmpLocation] = useState("");
   const [sort, setSort] = useState("Newest");
@@ -16,8 +17,46 @@ const Companies = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSearchSubmit = () => {};
+  const fetchCompanies = async() => {
+    setIsFetching(true);
+    const newUrl = updateURL({
+      pageNum:page,
+      query:searchQuery,
+      cmpLoc:cmpLocation,
+      sort: sort,
+      navigate:navigate,
+      location:location,
+    });
+
+    try {
+      const res = await apiRequest({
+        method: "GET",
+        url: newUrl,
+      });
+
+      console.log(res)
+
+      setNumPage(res?.numOfPage);
+      setRecordsCount(res?.total);
+      setData(res?.data);
+
+      setIsFetching(false);
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
+
+  const handleSearchSubmit = async(e) => {
+    e.preventDefault();
+    // setPage(1);
+    await fetchCompanies();
+  };
   const handleShowMore = () => {};
+
+  useEffect(()=>{
+    fetchCompanies();
+  },[page,sort])
 
   return (
     <div className='w-full'>
@@ -27,13 +66,13 @@ const Companies = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         location={cmpLocation}
-        setLocation={setSearchQuery}
+        setLocation={setCmpLocation}
       />
 
-      <div className='container mx-auto flex flex-col gap-5 2xl:gap-10 px-5 md:px-0 py-6 bg-[#f7fdfd]'>
+      <div className='container mx-auto flex flex-col gap-5 2xl:gap-10 px-5  py-6 bg-[#f7fdfd]'>
         <div className='flex items-center justify-between mb-4'>
           <p className='text-sm md:text-base'>
-            Shwoing: <span className='font-semibold'>1,902</span> Companies
+            Showing: <span className='font-semibold'>{recordsCount}</span> Companies
             Available
           </p>
 

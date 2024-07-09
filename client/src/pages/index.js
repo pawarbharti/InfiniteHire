@@ -1,4 +1,4 @@
-import FindJob from "./FindJob";
+import FindJobs from "./FindJobs";
 import AuthPage from "./Auth";
 import Companies from "./Companies";
 import UserProfile from "./UserProfile";
@@ -8,7 +8,7 @@ import About from "./About";
 import JobDetail from "./JobDetail";
 
 export {
-  FindJob,
+  FindJobs,
   AuthPage,
   Companies,
   UserProfile,
